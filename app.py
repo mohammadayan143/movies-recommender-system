@@ -3,27 +3,25 @@ import pickle
 import pandas as pd
 import requests
 import os
+import subprocess
 
-# --- Function to download file from Google Drive ---
+# --- Function to download file from Google Drive using gdown ---
 def download_from_drive(file_id, dest_path):
     if not os.path.exists(dest_path):
-        print(f"Downloading {dest_path} from Google Drive...")
-        url = f"https://drive.google.com/uc?id={file_id}"
-        r = requests.get(url)
-        with open(dest_path, 'wb') as f:
-            f.write(r.content)
+        print(f"Downloading {dest_path} from Google Drive via gdown...")
+        subprocess.run(['pip', 'install', 'gdown'])
+        subprocess.run(['gdown', f'https://drive.google.com/uc?id={file_id}', '-O', dest_path])
         print(f"✅ {dest_path} download complete!")
     else:
         print(f"{dest_path} already exists, skipping download.")
 
-# --- Download big files from Google Drive ---
-# ⬇️ Replace file_id below with your Google Drive file IDs
+# --- Download your big file ---
 download_from_drive("1r4NYFLY8kozJCU_p6RB12xQf1g31ByeA", "similarity.pkl")
 
-# (optional) if movie_dict.pkl bhi bada hai, usko bhi Google Drive se download kar sakte ho
-# Example: download_from_drive("<MOVIE_DICT_FILE_ID>", "movie_dict.pkl")
+# (optional) movie_dict.pkl ka link bhej do agar wo bhi large hai
+# download_from_drive("<MOVIE_DICT_ID>", "movie_dict.pkl")
 
-# --- Load Data ---
+# --- Load pickles ---
 movies_dict = pickle.load(open('movie_dict.pkl', 'rb'))
 movies = pd.DataFrame(movies_dict)
 similarity = pickle.load(open('similarity.pkl', 'rb'))
